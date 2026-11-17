@@ -1,18 +1,6 @@
 # @nx/angular: `webpack-merge` optional peer range (`^5.8.0`) rejects webpack-merge 6
 
-Minimal reproduction for an `npm install` failure after upgrading `@nx/angular` from **23.1.1** to **23.3.x** (and still present in **24.0.6** and the current canary).
-
-## Background
-
-[nrwl/nx#36310](https://github.com/nrwl/nx/pull/36310) moved `webpack-merge` in `@nx/angular` from `dependencies` to an **optional peer dependency**, without changing the ^5.8.0 range:
-
-| `@nx/angular` | `webpack-merge` declaration | range |
-| --- | --- | --- |
-| 23.1.1 | `dependencies` | `^5.8.0` |
-| 23.3.2 | `peerDependencies` (optional) | `^5.8.0` |
-| 24.0.6 (latest) | `peerDependencies` (optional) | `^5.8.0` |
-
-As a regular dependency, `^5.8.0` was harmless. npm installed a nested copy of webpack-merge 5 for `@nx/angular`, and the root kept its own version 6. As a peer dependency, the workspace's copy **must** match the range. Any project already using **webpack-merge 6.x** now fails to install. Version 6.0.0 was released 2024-07-02, more than 2 years ago.
+Minimal reproduction for [nrwl/nx#37925](https://github.com/nrwl/nx/issues/37925): `npm install` fails after upgrading `@nx/angular` from **23.1.1** to **23.3.x** (still present in **24.0.6** and the current canary).
 
 ## Steps to reproduce
 
@@ -58,18 +46,6 @@ npm error Fix the upstream dependency conflict, or retry this command with --for
 
 Changing `@nx/angular` to `23.1.1` installs without errors.
 
-## Expected result
+---
 
-`npm install` succeeds. The optional peer range should accept webpack-merge 6, e.g. `^5.8.0 || ^6.0.0`, or webpack-merge should not be declared as a peer dependency.
-
-## Notes
-
-- `@nx/angular` uses `merge` from webpack-merge: the named export in `dist/src/builders/utilities/webpack.js`, and the default export in the config that `convert-to-rspack` generates. webpack-merge 6.0.1 still provides both (`export { ..., merge, merge as default, ... }`). It now requires `node >= 18`, which Nx already requires.
-- `webpackMergeVersion` in `packages/angular/src/utils/versions.ts` is also `^5.8.0`. The `update-23-1-0/add-optional-webpack-packages` migration and the `setup-mf` generator use it to add webpack-merge to workspaces, so they may need the same bump.
-- The only workarounds are `--legacy-peer-deps` / `--force`, or downgrading webpack-merge to 5.x, or overriding webpack-merge under @nx/angular to 6.x.
-
-## Environment
-
-- node v26.12.1 / npm 11.20.0 (also fails in CI on node 22, see the Actions tab)
-- `@nx/angular` 23.3.2 (also 24.0.6, 24.1.0-beta.1)
-- `webpack-merge` 6.0.1
+This repo was created with the aid of Claude Opus 5.5 High.
