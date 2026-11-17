@@ -1,0 +1,16 @@
+name: repro
+
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  npm-install:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      # Expected to fail with ERESOLVE (see README)
+      - run: npm install --no-audit --no-fund
