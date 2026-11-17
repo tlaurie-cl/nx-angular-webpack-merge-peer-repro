@@ -64,7 +64,7 @@ Changing `@nx/angular` to `23.1.1` installs without errors.
 
 ## Notes
 
-- `@nx/angular` only uses the named `merge` export (`dist/src/builders/utilities/webpack.js`). That export is unchanged in webpack-merge 6, whose breaking change was dropping support for older Node versions.
+- `@nx/angular` uses `merge` from webpack-merge: the named export in `dist/src/builders/utilities/webpack.js`, and the default export in the config that `convert-to-rspack` generates. webpack-merge 6.0.1 still provides both (`export { ..., merge, merge as default, ... }`). It now requires `node >= 18`, which Nx already requires.
 - `webpackMergeVersion` in `packages/angular/src/utils/versions.ts` is also `^5.8.0`. The `update-23-1-0/add-optional-webpack-packages` migration and the `setup-mf` generator use it to add webpack-merge to workspaces, so they may need the same bump.
 - The only workarounds are `--legacy-peer-deps` / `--force`, or downgrading webpack-merge to 5.x.
 
