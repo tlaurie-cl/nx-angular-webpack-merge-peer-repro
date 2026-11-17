@@ -64,12 +64,35 @@ Changing `@nx/angular` to `23.1.1` installs without errors.
 
 ## Notes
 
+- Nx already uses webpack-merge 6 elsewhere: `@nx/angular-rspack` (`packages/angular-rspack/package.json` in this repo) depends on `webpack-merge: ^6.0.1`.
 - `@nx/angular` uses `merge` from webpack-merge: the named export in `dist/src/builders/utilities/webpack.js`, and the default export in the config that `convert-to-rspack` generates. webpack-merge 6.0.1 still provides both (`export { ..., merge, merge as default, ... }`). It now requires `node >= 18`, which Nx already requires.
 - `webpackMergeVersion` in `packages/angular/src/utils/versions.ts` is also `^5.8.0`. The `update-23-1-0/add-optional-webpack-packages` migration and the `setup-mf` generator use it to add webpack-merge to workspaces, so they may need the same bump.
 - The only workarounds are `--legacy-peer-deps` / `--force`, or downgrading webpack-merge to 5.x.
+- There is no lockfile in this repo because `npm install` fails before it can write one.
+
+## Nx Report
+
+`nx report` can't run here because `npm install` fails. The output below comes from a separate install of the same `package.json` with `npm install --legacy-peer-deps` (plus `nx@23.3.2`, because that flag skips peer dependencies):
+
+```
+Node           : 26.12.1
+OS             : win32-x64
+Native Target  : x86_64-windows
+npm            : 11.20.0
+daemon         : Disabled
+
+nx             : 23.3.2
+@nx/js         : 23.3.2
+@nx/eslint     : 23.3.2
+@nx/workspace  : 23.3.2
+@nx/angular    : 23.3.2
+@nx/devkit     : 23.3.2
+@nx/web        : 23.3.2
+typescript     : 6.0.3
+```
 
 ## Environment
 
-- node v26.12.1 / npm 11.20.0 (also fails in CI on node 22, see the Actions tab)
+- Windows 11 / node v26.12.1 / npm 11.20.0. It also fails in CI on ubuntu-latest / node 22 (see the Actions tab).
 - `@nx/angular` 23.3.2 (also 24.0.6, 24.1.0-beta.1)
 - `webpack-merge` 6.0.1
